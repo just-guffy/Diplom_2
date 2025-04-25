@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.is;
 
 public class CreateOrderTest {
     private static final String BASE_URI = "https://stellarburgers.nomoreparties.site";
-    private static final String[] VALID_INGREDIENTS = {"61c0c5a71d1f82001bdaaa6d", "61c0c5a71d1f82001bdaaa72"};
+    private String[] validIngredients;
     private static final String[] INVALID_INGREDIENTS = {"invalid_hash_1", "invalid_hash_2"};
     private static final String[] EMPTY_INGREDIENTS = {};
 
@@ -46,12 +46,15 @@ public class CreateOrderTest {
         // Авторизация пользователя
         Credentials credentials = new Credentials(user.getEmail(), user.getPassword());
         userService.login(credentials);
+
+        // Получаем 2 валидных ингредиента перед тестами
+        validIngredients = orderService.getTwoIngredients();
     }
 
     @Test
     @Step("Создание заказа с авторизацией и валидными ингредиентами")
     public void createOrderWithAuthAndValidIngredients() {
-        ValidatableResponse response = orderService.createOrderWithAuth(userAccessToken, VALID_INGREDIENTS);
+        ValidatableResponse response = orderService.createOrderWithAuth(userAccessToken, validIngredients);
 
         response.assertThat()
                 .statusCode(200)
@@ -63,7 +66,7 @@ public class CreateOrderTest {
     @Test
     @Step("Создание заказа без авторизации с валидными ингредиентами")
     public void createOrderWithoutAuthWithValidIngredients() {
-        ValidatableResponse response = orderService.createOrderWithoutAuth(VALID_INGREDIENTS);
+        ValidatableResponse response = orderService.createOrderWithoutAuth(validIngredients);
 
         response.assertThat()
                 .statusCode(200)

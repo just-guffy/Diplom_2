@@ -4,6 +4,8 @@ import io.qameta.allure.Step;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.response.ValidatableResponse;
 
+import java.util.List;
+
 import static io.restassured.RestAssured.given;
 
 public class UserOrderService {
@@ -71,6 +73,27 @@ public class UserOrderService {
                 .then()
                 .log()
                 .all();
+    }
+
+    @Step("Получение списка ингредиентов")
+    public ValidatableResponse getIngredients() {
+        return given()
+                .filter(new AllureRestAssured())
+                .log()
+                .all()
+                .baseUri(baseURI)
+                .get("/api/ingredients")
+                .then()
+                .log()
+                .all();
+    }
+
+    @Step("Получение двух ингредиентов")
+    public String[] getTwoIngredients() {
+        ValidatableResponse response = getIngredients();
+        List<String> ingredients = response.extract().jsonPath().getList("data._id");
+
+        return new String[]{ingredients.get(0), ingredients.get(1)};
     }
 
     // Внутренний класс для формирования тела запроса

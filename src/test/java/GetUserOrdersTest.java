@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.*;
 
 public class GetUserOrdersTest {
     private static final String BASE_URI = "https://stellarburgers.nomoreparties.site";
-    private static final String[] INGREDIENTS = {"61c0c5a71d1f82001bdaaa6d", "61c0c5a71d1f82001bdaaa72"};
+    private String[] validIngredients;
 
     private User user;
     private UserService userService;
@@ -48,8 +48,11 @@ public class GetUserOrdersTest {
         Credentials credentials = Credentials.fromUser(user);
         userService.login(credentials);
 
+        // Получаем 2 валидных ингредиента перед тестами
+        validIngredients = orderService.getTwoIngredients();
+
         // Создаем заказ, чтобы у пользователя была история заказов
-        orderService.createOrderWithAuth(userAccessToken, INGREDIENTS);
+        orderService.createOrderWithAuth(userAccessToken, validIngredients);
     }
 
     @Test
